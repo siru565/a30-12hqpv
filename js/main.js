@@ -124,6 +124,13 @@
     if (!cover || !startBtn) { fn(); return; }
     cover.hidden = false;
     startBtn.addEventListener('click', () => {
+      // 되는 기기(안드로이드 크롬 등)에서만 전체 화면. 안 되면 조용히 넘어간다.
+      try {
+        const el = document.documentElement;
+        const req = el.requestFullscreen || el.webkitRequestFullscreen;
+        const p = req && req.call(el, { navigationUI: 'hide' });
+        if (p && p.catch) p.catch(() => {});
+      } catch (e) { /* 지원 안 함 */ }
       cover.classList.add('is-leaving');
       setTimeout(() => cover.remove(), reduceMotion ? 0 : 700);
       fn();
